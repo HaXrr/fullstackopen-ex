@@ -1,0 +1,17 @@
+sequenceDiagram
+  participant Browser as User
+  participant Server as Server
+
+  Browser ->>+ Server: POST /exampleapp/new_note post note via form
+  Server -->>- Browser: 302 Redirect to /exampleapp/notes
+  Browser ->> Server: GET /exampleapp/notes userBrowser get updated Page
+  Server -->> Browser: HTML document
+  Browser ->> Server: GET /exampleapp/main.css userBrowser req for css
+  Server -->> Browser: CSS file userBrowser get css
+  Browser ->> Server: GET /exampleapp/main.js userBrowser req for JS
+  Server -->> Browser: JavaScript file userBrowser get JS
+  Note right of Browser: Browser executes JS to fetch JSON data via GET method
+  Browser ->> Server: GET /exampleapp/data.json userBrowser get JSON data
+  Server -->> Browser: JSON data userBrowser get the JSON data updated
+
+

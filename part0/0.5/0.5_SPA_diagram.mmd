@@ -1,0 +1,17 @@
+sequenceDiagram
+  participant Browser as User
+  participant Server as Server
+
+  Browser ->>+ Server: GET /exampleapp/spa Userbrowser send req for spa HTML
+  Server -->>- Browser: HTML document Userbrowser get the spa HTML
+
+  Browser ->> Server: GET /exampleapp/main.css Userbrowser send req for main.css
+  Server -->> Browser: CSS file Userbrowser get the main.css
+
+  Browser ->> Server: GET /exampleapp/spa.js Userbrowser send req for spa.js
+  Server -->> Browser: JavaScript Userbrowser get the spa.js
+
+  Note right of Browser: SPA JavaScript runs and fetches notes data without reloading the page
+
+  Browser ->> Server: GET /exampleapp/data.json Userbrowser add note and req to add the new JSON 
+  Server -->> Browser: JSON data (notes list) Userbrowser get the new JSON without reloading

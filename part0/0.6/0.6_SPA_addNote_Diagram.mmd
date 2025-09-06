@@ -1,0 +1,8 @@
+sequenceDiagram
+  participant Browser as User
+  participant Server as Server
+
+  Browser ->>+ Server: POST /exampleapp/new_note_spa (send new note as JSON)
+  Server -->>- Browser: 201 Created response with confirmation
+
+  Note right of Browser: SPA JavaScript updates the notes list in memory and re-renders without reloading
