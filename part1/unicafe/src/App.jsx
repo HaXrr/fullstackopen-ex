@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 
-const Content = ( { good, bad, neutral } ) => {
+const Statistics = ( { good, bad, neutral } ) => {
 
   const total = good + bad + neutral
   const average = (good*1 + neutral*0 + bad*(-1))/total
@@ -65,7 +65,7 @@ const App = () => {
     <div>
 
       <Controls handleGood={handleGood} handleNeutral={handleNeutral} handleBad={handleBad}   />
-      <Content good={good} bad={bad} neutral={neutral} />
+      <Statistics good={good} bad={bad} neutral={neutral} />
     </div>
   )
 }
