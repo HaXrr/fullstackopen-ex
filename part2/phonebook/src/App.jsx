@@ -1,5 +1,7 @@
 import { useState } from 'react'
-
+import Form from './Form'
+import Filter from './Filter'
+import Persons from './Persons'
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -9,19 +11,19 @@ const App = () => {
   ])
   const [newName, setNewName] = useState('')
   const [phone, setPhone] = useState("")
-  const [search, setSearch]= useState("")
+  const [search, setSearch] = useState("")
   const addPerson = (event) => {
     event.preventDefault()
-    const randId = Math.random()*persons.length
+    const randId = Math.random() * persons.length
 
-    if(!persons.some(person=> person.name ===newName)){
-      setPersons(persons.concat({name: newName, number: phone, id: randId}))
+    if (!persons.some(person => person.name === newName)) {
+      setPersons(persons.concat({ name: newName, number: phone, id: randId }))
 
     }
-    else{
+    else {
       alert(`${newName} Already exist`)
-      }
-    
+    }
+
     setNewName("")
     setPhone("")
     console.log("Form Submited", persons)
@@ -32,7 +34,7 @@ const App = () => {
     setNewName(e.target.value)
   }
 
-  const handlePhoneChange = (e)=>{
+  const handlePhoneChange = (e) => {
     console.log(e.target.value)
     setPhone(e.target.value)
   }
@@ -42,35 +44,18 @@ const App = () => {
     console.log("searching", search)
   }
   const personsToShow = persons.filter(person =>
-  person.name.toLowerCase().includes(search.toLowerCase())
-)
+    person.name.toLowerCase().includes(search.toLowerCase())
+  )
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handlePersonChange} />
-        </div>
-        <div>
-          Phone: <input type='phone' value={phone} onChange={handlePhoneChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Form addPerson={addPerson} handlePersonChange={handlePersonChange} handlePhoneChange={handlePhoneChange} />
       <br />
-      <div>
-        Search <input type="text" placeholder='search here by name' onChange={handleSearch} />
-      </div>
+      <Filter handleSearch={handleSearch} />
       <h2>Numbers</h2>
       <div>
-        {
-        personsToShow.map((person,i)=>{
-          return <p key={i} >name: {person.name}  _____  phone: {person.number}</p>
-             
-        })
-      }
+        <Persons personsToShow={personsToShow} />
       </div>
       ...
     </div>
