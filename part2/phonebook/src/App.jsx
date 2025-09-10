@@ -8,7 +8,13 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    setPersons(persons.concat({name: newName}))
+    if(!persons.some(person=> person.name ===newName)){
+      setPersons(persons.concat({name: newName}))
+    }
+    else{
+      alert(`${newName} Already exist`)
+      }
+    
     setNewName("")
 
     console.log("Form Submited", persons)
