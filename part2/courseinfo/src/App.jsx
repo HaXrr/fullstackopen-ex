@@ -39,13 +39,20 @@ const Header = ({ name }) => {
 
 const Content = ({ parts }) => {
   console.log(parts)
+  const total = parts[0].exercises+parts[1].exercises+parts[2].exercises
+  console.log("sum of exercises are: ", total)
+
+
   return (
     <div>
-      {
+      <div>
+        {
         parts.map((part) => {
           return <Part key={part.id} part={part} />
         })
       }
+      </div>
+      <p>Total Exersice: {total}</p>
     </div>
   )
 }
@@ -56,6 +63,15 @@ const Part = ({ part }) => {
   return <p key={part.id}>{part.name} ex: {part.exercises}</p>
 
 }
+
+
+
+
+
+
+
+
+
 
 export default App
 
