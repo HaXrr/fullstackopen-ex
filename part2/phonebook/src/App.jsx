@@ -3,13 +3,13 @@ import Form from "./Form";
 import Filter from "./Filter";
 import Persons from "./Persons";
 import personService from "./services/personService"; // <-- new import
-
+import Notification from "./Notification";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [phone, setPhone] = useState("");
   const [search, setSearch] = useState("");
-
+  const [message, setMessage] = useState("")
   useEffect(() => {
     personService.getAll().then(initialPersons => {
       setPersons(initialPersons);
@@ -25,7 +25,10 @@ const App = () => {
         personService.update(existingPerson.id, updatedPerson)
           .then(returnedPerson => {
             setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson))
-            setNewName("");
+            setMessage(`${newName} number replaced with new number!`)
+            setTimeout(() => {
+              setMessage("")
+            }, 3000);
             setPhone("");
           })
           .catch(err => {
@@ -37,6 +40,10 @@ const App = () => {
       const personObject = { name: newName, number: phone };
       personService.create(personObject).then(returnedPerson => {
         setPersons(persons.concat(returnedPerson));
+        setMessage(`${newName} added !`)
+            setTimeout(() => {
+              setMessage("")
+            }, 3000);
         setNewName("");
         setPhone("");
       });
@@ -69,6 +76,10 @@ const App = () => {
         newName={newName}
         phone={phone}
       />
+      <br />
+
+        <Notification message={message}/>
+   
       <br />
       <Filter handleSearch={handleSearch} />
       <h2>Numbers</h2>
