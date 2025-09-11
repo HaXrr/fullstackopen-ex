@@ -18,18 +18,30 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-
-    if (!persons.some(person => person.name === newName)) {
+    const existingPerson = persons.find(p => p.name === newName)
+    if (existingPerson) {
+      if (window.confirm(`${newName} already exist do you want to replace the number`)) {
+        const updatedPerson = { ...existingPerson, number: phone }
+        personService.update(existingPerson.id, updatedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson))
+            setNewName("");
+            setPhone("");
+          })
+          .catch(err => {
+            setPersons(persons.filter(p => p.id !== existingPerson.id));
+            console.log("something went wrong", err)
+          })
+      }
+    } else {
       const personObject = { name: newName, number: phone };
-
       personService.create(personObject).then(returnedPerson => {
         setPersons(persons.concat(returnedPerson));
         setNewName("");
         setPhone("");
       });
-    } else {
-      alert(`${newName} already exists`);
     }
+
   };
 
   const handlePersonChange = (e) => setNewName(e.target.value);
@@ -37,16 +49,16 @@ const App = () => {
   const handleSearch = (e) => setSearch(e.target.value);
 
   const personsToShow = persons.filter(person =>
-    person.name.toLowerCase().includes(search.toLowerCase())
+    person.name ? person.name.toLowerCase().includes(search.toLowerCase()) : false
   );
 
-const handleDelete = (id) => {
-  if (window.confirm("Are you sure you want to delete this person?")) {
-    personService.remove(id).then(() => {
-      setPersons(persons.filter(person => person.id !== id));
-    });
-  }
-};
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this person?")) {
+      personService.remove(id).then(() => {
+        setPersons(persons.filter(p => p.id !== id));
+      });
+    }
+  };
   return (
     <div>
       <h2>Phonebook</h2>
