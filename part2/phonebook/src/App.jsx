@@ -8,33 +8,44 @@ import { useEffect } from 'react'
 const App = () => {
   const [persons, setPersons] = useState([
   ])
+ 
 
   useEffect(()=>{
     axios.get('http://localhost:3001/persons')
     .then((res)=>{
       console.log(res.data)
       setPersons(res.data)
-
+    
     })
   },[])
-  
+
   const [newName, setNewName] = useState('')
   const [phone, setPhone] = useState("")
   const [search, setSearch] = useState("")
+
   const addPerson = (event) => {
     event.preventDefault()
-    const randId = Math.random() * persons.length
+    
 
     if (!persons.some(person => person.name === newName)) {
-      setPersons(persons.concat({ name: newName, number: phone, id: randId }))
+      
+      axios.post('http://localhost:3001/persons', {name: newName, number:phone})
+      .then((res)=>{
+        console.log(res)
+        setPersons(persons.concat(res.data))
+        setNewName("")
+    setPhone("")
 
+      })
+      .catch((err)=>{
+        console.log("error adding person data", err)
+      })
     }
     else {
       alert(`${newName} Already exist`)
     }
 
-    setNewName("")
-    setPhone("")
+    
     console.log("Form Submited", persons)
   }
 
