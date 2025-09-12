@@ -10,6 +10,7 @@ const App = () => {
   const [phone, setPhone] = useState("");
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("")
+  const [status, setStatus] = useState(true)
   useEffect(() => {
     personService.getAll().then(initialPersons => {
       setPersons(initialPersons);
@@ -20,30 +21,40 @@ const App = () => {
     event.preventDefault();
     const existingPerson = persons.find(p => p.name === newName)
     if (existingPerson) {
-      if (window.confirm(`${newName} already exist do you want to replace the number`)) {
-        const updatedPerson = { ...existingPerson, number: phone }
-        personService.update(existingPerson.id, updatedPerson)
+      if (window.confirm(`${newName} already exists, do you want to replace the number?`)) {
+        const updatedPerson = { ...existingPerson, number: phone };
+        personService
+          .update(existingPerson.id, updatedPerson)
           .then(returnedPerson => {
-            setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson))
-            setMessage(`${newName} number replaced with new number!`)
+            setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson));
+            setMessage(`Number for ${newName} updated successfully!`);
+            setStatus(true);
             setTimeout(() => {
-              setMessage("")
+              setMessage("");
             }, 3000);
             setPhone("");
           })
-          .catch(err => {
-            setPersons(persons.filter(p => p.id !== existingPerson.id));
-            console.log("something went wrong", err)
-          })
+          .catch(error => {
+            // 🛠 Handle when backend says 404
+            setMessage(
+              `Information of ${newName} has already been removed from the server`
+            );
+            setStatus(false); // false → "error" style
+            setPersons(persons.filter(p => p.id !== existingPerson.id)); // sync frontend
+            setTimeout(() => {
+              setMessage("");
+            }, 4000);
+          });
       }
-    } else {
+    }
+    else {
       const personObject = { name: newName, number: phone };
       personService.create(personObject).then(returnedPerson => {
         setPersons(persons.concat(returnedPerson));
         setMessage(`${newName} added !`)
-            setTimeout(() => {
-              setMessage("")
-            }, 3000);
+        setTimeout(() => {
+          setMessage("")
+        }, 3000);
         setNewName("");
         setPhone("");
       });
@@ -60,12 +71,23 @@ const App = () => {
   );
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this person?")) {
-      personService.remove(id).then(() => {
-        setPersons(persons.filter(p => p.id !== id));
-      });
+    const person = persons.find(p => p.id === id);
+
+    if (window.confirm(`Are you sure you want to delete ${person.name}?`)) {
+      personService
+        .remove(id)
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== id));
+          setMessage(`${person.name} was successfully deleted`);
+        })
+        .catch(() => {
+          setMessage(`${person.name} has already been deleted from the server`);
+          setStatus(false)
+          setPersons(persons.filter(p => p.id !== id)); // sync state with backend
+        });
     }
   };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -78,8 +100,8 @@ const App = () => {
       />
       <br />
 
-        <Notification message={message}/>
-   
+      <Notification status={status} message={message} />
+
       <br />
       <Filter handleSearch={handleSearch} />
       <h2>Numbers</h2>

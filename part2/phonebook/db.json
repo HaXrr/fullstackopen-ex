@@ -1,11 +1,6 @@
 {
   "persons": [
     {
-      "id": "1433",
-      "name": "asad",
-      "number": "123"
-    },
-    {
       "id": "39d1",
       "name": "rew",
       "number": "11111111111111"
@@ -14,16 +9,6 @@
       "id": "cadd",
       "name": "sewd",
       "number": "111222333"
-    },
-    {
-      "id": "723f",
-      "name": "sad",
-      "number": "212"
-    },
-    {
-      "id": "ce50",
-      "name": "was",
-      "number": "2131241"
     }
   ]
 }
