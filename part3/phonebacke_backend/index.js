@@ -24,6 +24,25 @@ app.get('/api/persons/:id', (req, res) => {
     else res.status(404).json({ error: "not found" })
 })
 
+app.post('/api/persons', (req, res)=> {
+    const data = req.body
+    if (!data.name || !data.number) {
+    return res.status(400).json({ error: "name or number missing" });
+  }
+  if (persons.find(p => p.name === data.name)) {
+    return res.status(400).json({ error: "name must be unique" });
+  }
+    
+    const newPerson = {
+        id: String(Math.floor(Math.random()*100000)),
+        name: data.name,
+        number: data.number,
+    }
+
+    persons = persons.concat(newPerson)
+    res.json(newPerson)
+})
+
 app.delete('/api/persons/:id', (req, res) => {
     persons = persons.filter(p => p.id !== req.params.id)
     res.status(204).json({ error: "person not found" })
