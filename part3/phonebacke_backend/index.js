@@ -1,10 +1,13 @@
 const express = require('express')
 const app = express()
-const morg = require('morgan')
-app.use(express.json()) // for parsing JSON bodies
+const morgan = require('morgan')
+app.use(express.json()) 
 
-app.use(morg('tiny'))
 
+morgan.token('body', (req) => JSON.stringify(req.body))
+
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 let persons = [
     { id: "1", name: "Arto Hellas", number: "040-123456" },
@@ -14,7 +17,6 @@ let persons = [
 ]
 
 
-// Get all persons
 app.get('/api/persons', (req, res) => {
     res.json(persons)
 })
