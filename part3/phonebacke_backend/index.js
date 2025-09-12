@@ -17,6 +17,13 @@ app.get('/api/persons', (req, res) => {
 })
 
 
+app.get('/api/persons/:id', (req, res)=> {
+    const id = req.params.id
+    const person = persons.find(p=> p.id === id)
+    if (person) res.json(person)
+    else res.status(404).json({error: "not found"})
+})
+
 app.get('/api/info', (req, res)=>{
     const count = persons.length
     const time = new Date()
