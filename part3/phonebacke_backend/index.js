@@ -1,7 +1,10 @@
 const express = require('express')
 const app = express()
-
+const morg = require('morgan')
 app.use(express.json()) // for parsing JSON bodies
+
+app.use(morg('tiny'))
+
 
 let persons = [
     { id: "1", name: "Arto Hellas", number: "040-123456" },
