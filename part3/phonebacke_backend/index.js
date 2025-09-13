@@ -62,7 +62,7 @@ app.get('/api/info', (req, res) => {
   `)
 })
 
-app.get('/', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.resolve('dist', 'index.html'))
 })
 
