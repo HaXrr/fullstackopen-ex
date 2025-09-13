@@ -4,7 +4,9 @@ const morgan = require('morgan')
 const cors = require('cors')
 app.use(cors())
 app.use(express.json()) 
+const path = require('path')
 
+app.use(express.static("dist"))
 
 morgan.token('body', (req) => JSON.stringify(req.body))
 
@@ -17,6 +19,9 @@ let persons = [
     { id: "3", name: "Dan Abramov", number: "12-43-234345" },
     { id: "4", name: "Mary Poppendieck", number: "39-23-6423122" }
 ]
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve('dist', 'index.html'))
+})
 
 
 app.get('/api/persons', (req, res) => {
