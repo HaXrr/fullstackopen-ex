@@ -62,9 +62,10 @@ app.get('/api/info', (req, res) => {
   `)
 })
 
-app.get('*', (req, res) => {
+app.get('/', (req, res) => {
   res.sendFile(path.resolve('dist', 'index.html'))
 })
+
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
