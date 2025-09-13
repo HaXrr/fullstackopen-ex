@@ -1,7 +1,7 @@
 
 import axios from "axios";
 
-const baseUrl = "https://fullstackopen-ex-production.up.railway.app/api/persons";
+const baseUrl = "/api/persons" 
 
 
 const getAll = () => {
