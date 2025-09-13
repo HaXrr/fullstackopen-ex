@@ -1,8 +1,8 @@
 const express = require('express')
 const app = express()
-const morgan = require('morgan')
 const cors = require('cors')
 app.use(cors())
+const morgan = require('morgan')
 app.use(express.json())
 const path = require('path')
 
@@ -63,7 +63,7 @@ app.get('/api/info', (req, res) => {
 })
 
 app.use((req, res) => {
-  res.sendFile(path.resolve('dist', 'index.html'))
+  res.sendFile(path.resolve('./dist/', 'index.html'))
 })
 
 
