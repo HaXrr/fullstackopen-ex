@@ -7,7 +7,7 @@ import Notification from "./Notification";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState(true)
@@ -18,75 +18,53 @@ const App = () => {
   }, []);
 
   const addPerson = (event) => {
-    event.preventDefault();
-    const existingPerson = persons.find(p => p.name === newName)
-    if (existingPerson) {
-      if (window.confirm(`${newName} already exists, do you want to replace the number?`)) {
-        const updatedPerson = { ...existingPerson, number: phone };
-        personService
-          .update(existingPerson.id, updatedPerson)
-          .then(returnedPerson => {
-            setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson));
-            setMessage(`Number for ${newName} updated successfully!`);
-            setStatus(true);
-            setTimeout(() => {
-              setMessage("");
-            }, 3000);
-            setPhone("");
-          })
-          .catch(error => {
-            // 🛠 Handle when backend says 404
-            setMessage(
-              `Information of ${newName} has already been removed from the server`
-            );
-            setStatus(false); // false → "error" style
-            setPersons(persons.filter(p => p.id !== existingPerson.id)); // sync frontend
-            setTimeout(() => {
-              setMessage("");
-            }, 4000);
-          });
-      }
-    }
-    else {
-      const personObject = { name: newName, number: phone };
-      personService.create(personObject).then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson));
-        setMessage(`${newName} added !`)
-        setTimeout(() => {
-          setMessage("")
-        }, 3000);
-        setNewName("");
-        setPhone("");
-      });
-    }
-
+  event.preventDefault();
+  const person = {
+    name: newName,
+    number: newNumber
   };
 
+  personService.create(person).then(returnedPerson => {
+    setPersons(persons.concat(returnedPerson)); // 👈 add to state
+    setNewName("");
+    setNewNumber("");
+    setMessage(`${returnedPerson.name} added successfully`);
+    setStatus(true);
+    setTimeout(() => setMessage(""), 3000);
+  }).catch(error => {
+    setMessage(error.response?.data?.error || "Error adding person");
+    setStatus(false);
+  });
+};
+
   const handlePersonChange = (e) => setNewName(e.target.value);
-  const handlePhoneChange = (e) => setPhone(e.target.value);
+  const handlePhoneChange = (e) => setNewNumber(e.target.value);
   const handleSearch = (e) => setSearch(e.target.value);
 
   const personsToShow = persons.filter(person =>
     person.name ? person.name.toLowerCase().includes(search.toLowerCase()) : false
   );
 
-  const handleDelete = (id) => {
-    const person = persons.find(p => p.id === id);
+ const handleDelete = (id) => {
+  const person = persons.find(p => p._id === id);
+  console.log("id for deletion: ", person)
+  if (window.confirm(`Are you sure you want to delete ${person.name}?`)) {
+    personService
+      .remove(id)
+      .then(() => {
+        setPersons(persons.filter(p => p.id !== id));
+        setMessage(`${person.name} was successfully deleted`);
+        setStatus(true);
+        setTimeout(() => setMessage(""), 3000);
+      })
+      .catch(error => {
+        setMessage(error.response?.data?.error || `${person.name} could not be deleted`);
+        setStatus(false);
+        setPersons(persons.filter(p => p.id !== id)); // keep frontend in sync
+      });
+  }
+};
 
-    if (window.confirm(`Are you sure you want to delete ${person.name}?`)) {
-      personService
-        .remove(id)
-        .then(() => {
-          setPersons(persons.filter(p => p.id !== id));
-          setMessage(`${person.name} was successfully deleted`);
-        })
-        .catch(() => {
-          setMessage(`${person.name} has already been deleted from the server`);
-          setStatus(false)
-          setPersons(persons.filter(p => p.id !== id)); // sync state with backend
-        });
-    }
-  };
 
   return (
     <div>
@@ -96,7 +74,7 @@ const App = () => {
         handlePersonChange={handlePersonChange}
         handlePhoneChange={handlePhoneChange}
         newName={newName}
-        phone={phone}
+        phone={newNumber}
       />
       <br />
 
